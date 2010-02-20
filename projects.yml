@@ -1,13 +1,13 @@
-md4:
-  name: MD4
+minici:
+  name: minici
   debug: true
-  repo: git@aurorasoft.com.au:au_md4.git
-  build: rake cruise
+  repo: git@aurorasoft.com.au:minici.git
+  build: rake spec
   notify:
     failure:
       include:
         - build.log
-        - log/cucumber.log
+        - log/test.log
       email:
         - jstirk@aurorasoft.com.au
     success:
