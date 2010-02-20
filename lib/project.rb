@@ -116,7 +116,6 @@ private
 
 	def server_revision
 		# Find out what the server says
-		return "BOGUS"
 		cmd="cd #{@root}; git ls-remote origin #{branch}"
 		debug(cmd)
 		log=`#{cmd}`.strip
@@ -192,7 +191,6 @@ EMAIL
 			mail.deliver!
 		end
 		# else, we've no addresses to send to, so no notifications
-
 	end
 
 	def last_status_file
