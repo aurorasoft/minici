@@ -1,16 +1,15 @@
 minici:
   name: minici
-  debug: true
   repo: git@aurorasoft.com.au:minici.git
   build: rake spec
   notify:
+    from: example@example.com
     failure:
       include:
-        - build.log
-        - log/test.log
+        - minici.rb
       email:
-        - jstirk@aurorasoft.com.au
+        - example@example.com
     success:
     fixed:
       email:
-        - jstirk@aurorasoft.com.au
+        - example@example.com
