@@ -229,8 +229,10 @@ EMAIL
 	end
 	
 	def write_status_file(status)
-		File.open(last_status_file, 'w') do |f|
-			f << status
+		if File.exists?(Pathname(last_status_file).dirname) then
+			File.open(last_status_file, 'w') do |f|
+				f << status
+			end
 		end
 	end
 
@@ -239,7 +241,7 @@ EMAIL
 	end
 
 	def write_lock_file(pid)
-		if File.exists?(Pathname(last_status_file).dirname) then
+		if File.exists?(Pathname(lock_file).dirname) then
 			File.open(lock_file, 'w') do |f|
 				f << pid
 			end
