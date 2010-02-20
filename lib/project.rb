@@ -44,7 +44,6 @@ class Project
 				write_status_file(new_status)
 			else
 				# Same revision we've already tested - so, just fall out
-				debug("No changes from #{head_revision}...")
 			end
 			
 			# Finished
