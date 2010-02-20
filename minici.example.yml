@@ -1,4 +1,5 @@
 project_dir: Projects
+max_duration: 3600
 debug: false
 email:
   # smtp or sendmail - pick one

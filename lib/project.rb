@@ -21,10 +21,17 @@ class Project
 
 	def fork_and_process!
 		fork do
-			# TODO: Check for lockfile first - return immediately if present
-			# TODO: Unless it's been there for a long time, then clear it out
-			#       but only if that PID is dead...
 			@pid=$$
+
+			# Check for lockfile first - return immediately if present
+			# Unless it's been there for a long time, then clear it out and kill the process
+			if project_locked? then
+				# Another thread is working on it - leave it alone
+				debug('Bailing out until later')
+				exit 0
+			end
+
+			write_lock_file(@pid)
 			debug('Processing...')
 
 			check_repository
@@ -50,6 +57,7 @@ class Project
 			end
 			
 			# Finished
+			remove_lock_file
 			debug('Returning...')
 		end
 	end
@@ -215,5 +223,40 @@ EMAIL
 		File.open(last_status_file, 'w') do |f|
 			f << status
 		end
+	end
+
+	def lock_file
+		File.join(@root, '.minici.lock')
+	end
+
+	def write_lock_file(pid)
+		File.open(lock_file, 'w') do |f|
+			f << pid
+		end
+	end
+
+	def remove_lock_file
+		File.delete(lock_file)
+	end
+
+	def project_locked?
+		if File.exists?(lock_file) then
+			debug('Lockfile exists...')
+			mtime=File.stat(lock_file).mtime
+			if mtime < (Time.now - @data['max_duration'].to_i) then
+				# Old process has been running for longer than max_duration
+				old_pid=File.read(lock_file).strip
+				debug("Lockfile is #{(Time.now-mtime).to_i} seconds old - sending SIG_KILL to #{old_pid}")
+				begin
+					Process.kill("KILL", old_pid.to_i)
+				rescue Errno::ESRCH
+					# The process couldn't be killed - who cares!?
+				end
+				File.delete(lock_file)
+			else
+				return true
+			end
+		end
+		return false
 	end
 end

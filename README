@@ -74,8 +74,6 @@ Bugs, Shortcomings and Known Issues
 TODO
 ====
 
-* Project Locking (only run one instance of each project building
-  at a time)
 * Add support for other RCS (eg. Subversion, Hg)
 * Comments. Cos, you know, they're pretty light on at the moment...
 * Unit tests. There's not a lot of code here, but it still needs something!
@@ -83,11 +81,11 @@ TODO
 Ego Trippin'
 ============
 
-Minici was built in one afternoon by Jason Stirk (http://griffin.oobleyboo.com)
+Minici was built in one evening by Jason Stirk (http://griffin.oobleyboo.com),
 because CC.rb was incredibly slow and clumsy, and I _still_ can't get Integrity
 to fscking well run anywhere.
 
-It's now in production use at Aurora Software (http://www.aurorasoft.com.au/)
+Minici is in production use at Aurora Software (http://www.aurorasoft.com.au/)
 
 Licencing
 =========
