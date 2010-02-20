@@ -12,7 +12,7 @@ class Minici
 		@settings['project_dir'] ||= 'Projects'
 
 		unless File.exist?(@settings['project_dir']) && File.directory?(@settings['project_dir']) then
-			FileUtil.mkdir(@settings['project_dir'])
+			FileUtils.mkdir(@settings['project_dir'])
 		end
 
 		Mail.defaults do
