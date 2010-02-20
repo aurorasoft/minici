@@ -9,7 +9,7 @@ class Project
 		@projects_dir=Pathname.new(File.join(data['project_dir'])).expand_path
 		@root=File.join(@projects_dir, @id)
 		@minici=minici
-
+		@log=''
 	end
 
 	def self.enumerate
@@ -26,6 +26,7 @@ class Project
 
 			check_repository
 			head_revision=server_revision
+			debug("Local: #{current_revision[0..7]} Remote: #{server_revision[0..7]}")
 			if current_revision != head_revision then
 				# We need to update!
 				update_repository
@@ -51,6 +52,7 @@ class Project
 		end
 	end
 
+private
 	def debug(msg, multicall=false)
 		if @debug then
 			if multicall then
@@ -71,7 +73,10 @@ class Project
 		end
 	end
 
-private
+	def notice(msg)
+		@log << msg
+	end
+
 	def check_repository
 		if @data['repo'] =~ /^git/ then
 			# Update the repository and see whether there's anything new to run
@@ -86,7 +91,7 @@ private
 				debug("Cloning repository from #{@data['repo']}")
 				cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id}"
 				debug(cmd)
-				system(cmd)
+				notice `#{cmd}`
 			end
 
 		else
@@ -95,11 +100,10 @@ private
 	end
 
 	def update_repository
-		return true
 		if @data['repo'] =~ /^git/ then
 			debug("Pulling latest revision from origin")
 			cmd="cd #{@root}; git pull origin #{branch}"
-			system(cmd)
+			notice `#{cmd}`
 		end
 	end
 
@@ -115,11 +119,12 @@ private
 	end
 
 	def server_revision
+		return @server_revision unless @server_revision.nil?
 		# Find out what the server says
 		cmd="cd #{@root}; git ls-remote origin #{branch}"
 		debug(cmd)
 		log=`#{cmd}`.strip
-		extract_git_hash(log)
+		@server_revision=extract_git_hash(log)
 	end
 
 	def extract_git_hash(string)
@@ -135,7 +140,7 @@ private
 
 		cmd="cd #{@root}; #{@data['build']} >> minici-build.log 2>> minici-build.log"
 		debug(cmd)
-		system(cmd)
+		notice(cmd)
 		complete=$?
 
 		debug("Finished with status of: #{complete.exitstatus}")
@@ -174,6 +179,9 @@ private
 minici build report for #{@data['name']} #{current_revision}
 
 Status: #{target.upcase}
+
+Test Log:
+#{@log}
 EMAIL
 			
 			mail.add_file :filename => "build-#{current_revision}.log", :content => File.read(File.join(@root, "minici-build.log"))
