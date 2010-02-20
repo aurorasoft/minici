@@ -70,6 +70,9 @@ Bugs, Shortcomings and Known Issues
   isn't watching for this kind of change.
   You _can_ change the branch, but you'll need to go into the project
   directory and "git checkout" the new branch manually.
+* Probably won't work on Windows, as it tends to use some shell tricks
+  to get everything to work right.
+* Not sure whether it'll work on Mac, as I don't have one to test with.
 
 TODO
 ====
