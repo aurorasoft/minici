@@ -3,18 +3,11 @@ class Project
 		@id=id
 		@data=data
 		@debug=data['debug'] || false
-		@root=data['root']
+		@root=Pathname.new(File.join('Projects', @id)).expand_path
 	end
 
 	def self.enumerate
-		projects={}
-		Pathname.glob("**/.minici.yml").each do |config|
-			project_id=config.to_s.split(/[\/\\]/)[1]
-			projects[project_id]=YAML.load_file(config)['project']
-			projects[project_id]['config_file']=config
-			projects[project_id]['root']=Pathname.new(config).expand_path.dirname.to_s
-		end
-		projects
+		YAML.load_file('projects.yml')
 	end
 
 	def fork_and_process!
@@ -32,22 +25,53 @@ class Project
 		end
 	end
 
-	def debug(msg)
+	def debug(msg, multicall=false)
 		if @debug then
-			puts "#{@id}[#{@pid}] - #{msg}"
+			if multicall then
+				if @debug_pending then
+					print "#{msg}"
+				else
+					@debug_pending=true
+					print "#{@id}[#{@pid}] - #{msg} "
+				end
+			else
+				if @debug_pending then
+					puts "#{msg}"
+				else
+					puts "#{@id}[#{@pid}] - #{msg} "
+				end
+				@debug_pending=false
+			end
 		end
 	end
 
 private
 	def check_repository
-		if @data['repo'] =~ /^git:\/\// then
-			# TODO: Update the repository and see whether there's anything new to run
-			if File.exist?(File.join(@root, '.git')) then
+		if @data['repo'] =~ /^git/ then
+			# Update the repository and see whether there's anything new to run
+			repo_path=File.join(@root, '.git')
+			debug("Looking for \"#{repo_path}\"...", true)
+			if File.exist?(repo_path) then
 				# There's a repo there - update it
+				debug("Found!")
 			else
 				# We need to check out the repo now
-				
+				debug("Missing!")
+				debug("Cloning repository from #{@data['repo']}")
+				cmd="cd #{@root}; git clone #{@data['repo']}"
+				debug(cmd)
+				system(cmd)
 			end
+
+			branch=@data['branch'] || 'master'
+
+			# Just try to update the build
+			cmd="cd #{@root}; git ls-remote origin #{branch}"
+			debug(cmd)
+			log=`#{cmd}`
+			debug(log)
+
+
 			# TODO: If there is, run the build command
 		else
 			debug("Don't know how to handle \"#{@data['repo']}\"")
