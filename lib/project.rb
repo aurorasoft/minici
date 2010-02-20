@@ -239,13 +239,15 @@ EMAIL
 	end
 
 	def write_lock_file(pid)
-		File.open(lock_file, 'w') do |f|
-			f << pid
+		if File.exists?(Pathname(last_status_file).dirname) then
+			File.open(lock_file, 'w') do |f|
+				f << pid
+			end
 		end
 	end
 
 	def remove_lock_file
-		File.delete(lock_file)
+		File.delete(lock_file) if File.exists?(lock_file)
 	end
 
 	def project_locked?
