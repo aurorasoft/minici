@@ -2,6 +2,9 @@ require 'fileutils'
 require 'mail'
 
 class Project
+
+	IO_REDIRECT=" 2>&1"
+
 	def initialize(id, data, minici)
 		@id=id
 		@data=data
@@ -73,7 +76,7 @@ private
 	end
 
 	def notice(msg)
-		@log << msg
+		@log << "#{msg}\n"
 	end
 
 	def check_repository
@@ -88,7 +91,7 @@ private
 				# We need to check out the repo now
 				debug("Missing!")
 				debug("Cloning repository from #{@data['repo']}")
-				cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id}"
+				cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id} #{IO_REDIRECT}"
 				debug(cmd)
 				notice(`#{cmd}`)
 			end
@@ -102,18 +105,18 @@ private
 		if @data['repo'] =~ /^git/ then
 			old=current_revision
 			debug("Pulling latest revision from origin")
-			cmd="cd #{@root}; git pull origin #{branch}"
+			cmd="cd #{@root}; git pull origin #{branch} #{IO_REDIRECT}"
 			notice(`#{cmd}`)
 
 			# Get the log between the two
-			cmd="cd #{@root}; git log #{old}..#{server_revision} --pretty=full"
+			cmd="cd #{@root}; git log #{old}..#{server_revision} --pretty=full #{IO_REDIRECT}"
 			notice(`#{cmd}`)
 		end
 	end
 
 	def current_revision
 		# Get the current revision
-		cmd="cd #{@root}; git log -n 1 --pretty=oneline"
+		cmd="cd #{@root}; git log -n 1 --pretty=oneline #{IO_REDIRECT}"
 		log=`#{cmd}`.strip
 		extract_git_hash(log)
 	end
@@ -125,7 +128,7 @@ private
 	def server_revision
 		return @server_revision unless @server_revision.nil?
 		# Find out what the server says
-		cmd="cd #{@root}; git ls-remote origin #{branch}"
+		cmd="cd #{@root}; git ls-remote origin #{branch} #{IO_REDIRECT}"
 		debug(cmd)
 		log=`#{cmd}`.strip
 		@server_revision=extract_git_hash(log)

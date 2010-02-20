@@ -5,7 +5,6 @@ class Minici
 	def initialize
 		settings_file=[ 'minici.yml', '~/.minici.yml' ].collect { |x| Pathname.new(x).expand_path }.find { |x| File.exists?(x) }
 		settings_yml={}
-		puts "Loading settings from #{settings_file}"
 		settings_yml=YAML.load_file(settings_file) if File.exist?(settings_file)
 		settings={}.merge(settings_yml)
 		@settings=settings
