@@ -20,12 +20,6 @@ See the *.example.yml files for hints on how these should look.
 Emails can be sent on different stages depending on whether the build has
 failed, just been fixed, or is an ongoing successful build.
 
-Dependencies
-============
-
-* Ruby
-* mail gem (2.1.2 works)
-
 Key Aims
 ========
 
@@ -34,6 +28,23 @@ Key Aims
 * Something which runs via cron, not as a daemon
 * Must be fast (we want to run it on a Celeron 600MHz)
 * It must prevent me from watching the build script run
+* If it's running in cron, it must be threaded so as that
+  a long running build can't stop all others
+
+Dependencies
+============
+
+* Ruby
+* mail gem (2.1.2 works)
+
+Installation
+============
+
+* Create somewhere for it to live (probably under your home)
+* TODO: git clone ???where???
+* Add an entry in your crontab like :
+  */5 * * * * cd ~/minici; minici
+* Start setting up your projects (see next section)
 
 Setting Up a new Project
 ========================
@@ -63,8 +74,11 @@ Bugs, Shortcomings and Known Issues
 TODO
 ====
 
-* Locking (only run one instance at a time)
+* Project Locking (only run one instance of each project building
+  at a time)
 * Add support for other RCS (eg. Subversion, Hg)
+* Comments. Cos, you know, they're pretty light on at the moment...
+* Unit tests. There's not a lot of code here, but it still needs something!
 
 Ego Trippin'
 ============

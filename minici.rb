@@ -1,7 +1,7 @@
 #!/bin/env ruby
-#
+# Minici - the Mini-CI server
+# Super lightweight CI script to be run periodically via cron
+# http://github.com/aurorasoft/minici/
 
 require 'lib/minici'
-# Put in crontab to run every X minutes
-
 Minici.new.start!
