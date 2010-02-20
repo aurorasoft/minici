@@ -41,7 +41,7 @@ Installation
 ============
 
 * Create somewhere for it to live (probably under your home)
-* TODO: git clone ???where???
+* git clone http://github.com/aurorasoft/minici.git
 * Add an entry in your crontab like :
   */5 * * * * cd ~/minici; minici
 * Start setting up your projects (see next section)
