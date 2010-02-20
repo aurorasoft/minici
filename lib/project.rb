@@ -91,7 +91,7 @@ private
 				debug("Cloning repository from #{@data['repo']}")
 				cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id}"
 				debug(cmd)
-				notice `#{cmd}`
+				notice(`#{cmd}`)
 			end
 
 		else
@@ -101,9 +101,14 @@ private
 
 	def update_repository
 		if @data['repo'] =~ /^git/ then
+			old=current_revision
 			debug("Pulling latest revision from origin")
 			cmd="cd #{@root}; git pull origin #{branch}"
-			notice `#{cmd}`
+			notice(`#{cmd}`)
+
+			# Get the log between the two
+			cmd="cd #{@root}; git log #{old}..#{server_revision} --pretty=full"
+			notice(`#{cmd}`)
 		end
 	end
 
@@ -140,7 +145,7 @@ private
 
 		cmd="cd #{@root}; #{@data['build']} >> minici-build.log 2>> minici-build.log"
 		debug(cmd)
-		notice(cmd)
+		notice(`#{cmd}`)
 		complete=$?
 
 		debug("Finished with status of: #{complete.exitstatus}")
@@ -180,7 +185,7 @@ minici build report for #{@data['name']} #{current_revision}
 
 Status: #{target.upcase}
 
-Test Log:
+Log:
 #{@log}
 EMAIL
 			
