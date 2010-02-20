@@ -30,12 +30,14 @@ class Minici
 	def start!
 		projects=Project.enumerate
 
+		pids=[]
+
 		projects.each do |id, project|
 			project['debug']=@settings['debug'] if project['debug'].nil?
 			project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
 			p=Project.new(id, project, self)
-			p.fork_and_process!
+			pids << p.fork_and_process!
 		end
-		Process.wait
+		Process.waitall
 	end
 end
