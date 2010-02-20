@@ -80,38 +80,37 @@ private
 	end
 
 	def check_repository
-		if @data['repo'] =~ /^git/ then
-			# Update the repository and see whether there's anything new to run
-			repo_path=File.join(@root, '.git')
-			debug("Looking for \"#{repo_path}\"...", true)
-			if File.exist?(repo_path) then
-				# There's a repo there - update it
-				debug("Found!")
-			else
-				# We need to check out the repo now
-				debug("Missing!")
-				debug("Cloning repository from #{@data['repo']}")
-				cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id} #{IO_REDIRECT}"
-				debug(cmd)
+		# Update the repository and see whether there's anything new to run
+		repo_path=File.join(@root, '.git')
+		debug("Looking for \"#{repo_path}\"...", true)
+		if File.exist?(repo_path) then
+			# There's a repo there - update it
+			debug("Found!")
+		else
+			# We need to check out the repo now
+			debug("Missing!")
+			debug("Cloning repository from #{@data['repo']}")
+			cmd="cd #{@projects_dir}; git clone #{@data['repo']} #{@id} #{IO_REDIRECT}"
+			debug(cmd)
+			notice(`#{cmd}`)
+
+			# We're just checking it out, so check out any special branch if we need to
+			if branch != 'master' then
+				cmd="cd #{@root}; git branch --track #{branch} origin/#{branch} #{IO_REDIRECT}; git checkout #{branch} #{IO_REDIRECT}"
 				notice(`#{cmd}`)
 			end
-
-		else
-			debug("Don't know how to handle \"#{@data['repo']}\"")
 		end
 	end
 
 	def update_repository
-		if @data['repo'] =~ /^git/ then
-			old=current_revision
-			debug("Pulling latest revision from origin")
-			cmd="cd #{@root}; git pull origin #{branch} #{IO_REDIRECT}"
-			notice(`#{cmd}`)
+		old=current_revision
+		debug("Pulling latest revision from origin")
+		cmd="cd #{@root}; git pull origin #{branch} #{IO_REDIRECT}"
+		notice(`#{cmd}`)
 
-			# Get the log between the two
-			cmd="cd #{@root}; git log #{old}..#{server_revision} --pretty=full #{IO_REDIRECT}"
-			notice(`#{cmd}`)
-		end
+		# Get the log between the two
+		cmd="cd #{@root}; git log #{old}..#{server_revision} --pretty=full #{IO_REDIRECT}"
+		notice(`#{cmd}`)
 	end
 
 	def current_revision
