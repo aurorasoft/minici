@@ -1,0 +1,16 @@
+project:
+  name: MD4
+  debug: true
+  repo: git://git@aurorasoft.com.au:au_md4.git
+  build: rake cruise
+  notify:
+    failure:
+      include:
+        - build.log
+        - log/cucumber.log
+      email:
+        - jstirk@aurorasoft.com.au
+    success:
+    fixed:
+      email:
+        - jstirk@aurorasoft.com.au
