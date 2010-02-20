@@ -6,7 +6,9 @@ minici:
     from: example@example.com
     failure:
       include:
-        - minici.rb
+        - projects.yml
+        - minici.yml
+        - minici
       email:
         - example@example.com
     success:
