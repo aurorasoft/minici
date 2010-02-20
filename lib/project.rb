@@ -142,7 +142,16 @@ private
 	end
 
 	def extract_git_hash(string)
-		string.match(/([a-f0-9]{40})/)[1].downcase
+		output=string.match(/([a-f0-9]{40})/)
+		if output then
+			output[1].downcase
+		else
+			# We couldn't find the hash, so presumably something went wrong
+			# Exit out forcibly
+			debug(string)
+			STDERR << "\n#{string}\n"
+			'00000000'
+		end
 	end
 
 	def run_tests()
