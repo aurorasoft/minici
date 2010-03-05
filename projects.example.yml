@@ -1,7 +1,8 @@
 minici:
   name: minici
   repo: git@aurorasoft.com.au:minici.git
-  build: rake spec
+  build:
+    - rake spec
   notify:
     from: example@example.com
     failure:

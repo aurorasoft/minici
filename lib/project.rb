@@ -161,17 +161,30 @@ private
 		build_log=File.join(@root, 'minici-build.log')
 		File.delete(build_log) if File.exist?(build_log)
 
-		cmd="cd #{@root}; #{@data['build']} >> minici-build.log 2>> minici-build.log"
-		debug(cmd)
-		notice(`#{cmd}`)
-		complete=$?
+		complete_full=0
 
-		debug("Finished with status of: #{complete.exitstatus}")
+		if @data['build'].is_a?(Array) then
+			@data['build'].each do |instruction|
+				cmd="cd #{@root}; #{instruction} >> minici-build.log 2>> minici-build.log"
+				debug(cmd)
+				notice(`#{cmd}`)
+				complete=$?
+				debug("Finished with status of: #{complete.exitstatus}")
+				complete_full += complete.exitstatus
+			end
+		else
+			cmd="cd #{@root}; #{@data['build']} >> minici-build.log 2>> minici-build.log"
+			debug(cmd)
+			notice(`#{cmd}`)
+			complete=$?
+			debug("Finished with status of: #{complete.exitstatus}")
+			complete_full = complete.exitstatus
+		end
 
 		t2=Time.now
 		debug("Tests took #{(t2-t1).to_i} seconds for #{@id}")
 
-		if complete.exitstatus.to_i != 0 then
+		if complete_full != 0 then
 			return 'ERROR'
 		else
 			return 'OK'
