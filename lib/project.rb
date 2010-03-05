@@ -49,6 +49,7 @@ class Project
 
 				new_status=run_tests()
 
+				execute_for_status(new_status, last_status)
 				notify_for_status(new_status, last_status)
 
 				write_status_file(new_status)
@@ -191,19 +192,22 @@ private
 		end
 	end
 
-	def notify_for_status(new_status, old_status)
-		if new_status == 'OK' then
-			if old_status != 'OK' then
-				# It's the first time we've run, or it's a fixed revision.
-				# Notify for success!
-				target='fixed'
-			else
-				# It's previously worked
-				target='success'
-			end
-		else
-			target='failure'
+	def execute_for_status(new_status, old_status)
+		target=generate_target(new_status, old_status)
+
+		debug("Processing commands for #{target} status")
+		if @data['notify'][target]['run'] then
+			cmd="cd #{@root}; #{@data['notify'][target]['run']} >> minici-build.log 2>> minici-build.log"
+			cmd.gsub!(/\$DATE/, Time.now.strftime('%Y%m%d'))
+			debug(cmd)
+			notice(`#{cmd}`)
+			complete=$?
+			debug("Finished with status of: #{complete.exitstatus}")
 		end
+	end
+
+	def notify_for_status(new_status, old_status)
+		target=generate_target(new_status, old_status)
 
 		debug("Processing notifications for #{target} status")
 		if @data['notify'][target]['email'] then
@@ -284,5 +288,21 @@ EMAIL
 			end
 		end
 		return false
+	end
+
+	def generate_target(new_status, old_status)
+		if new_status == 'OK' then
+			if old_status != 'OK' then
+				# It's the first time we've run, or it's a fixed revision.
+				# Notify for success!
+				target='fixed'
+			else
+				# It's previously worked
+				target='success'
+			end
+		else
+			target='failure'
+		end
+		return target
 	end
 end
