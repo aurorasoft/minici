@@ -13,6 +13,8 @@ minici:
       email:
         - example@example.com
     success:
+      run:
+        - tar -czf /tmp/minici-$DATE.tar.gz ../minici
     fixed:
       email:
         - example@example.com
