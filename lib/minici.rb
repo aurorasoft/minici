@@ -15,6 +15,9 @@ class Minici
 		# If it's not specified, only let processes run for up to 1 hr
 		@settings['max_duration'] ||= 3600
 
+		# By default, let five projects build at a time
+		@settings['concurrency'] ||= 5
+
 		unless File.exist?(@settings['project_dir']) && File.directory?(@settings['project_dir']) then
 			FileUtils.mkdir(@settings['project_dir'])
 		end
@@ -35,13 +38,15 @@ class Minici
 
 		pids=[]
 
-		projects.each do |id, project|
-			project['debug']=@settings['debug'] if project['debug'].nil?
-			project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
-			project['max_duration']=@settings['max_duration'] if project['max_duration'].nil?
-			p=Project.new(id, project, self)
-			pids << p.fork_and_process!
+		projects.each_slice(@settings['concurrency'].to_i) do |slice|
+			slice.each do |id, project|
+				project['debug']=@settings['debug'] if project['debug'].nil?
+				project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
+				project['max_duration']=@settings['max_duration'] if project['max_duration'].nil?
+				p=Project.new(id, project, self)
+				pids << p.fork_and_process!
+			end
+			Process.waitall
 		end
-		Process.waitall
 	end
 end

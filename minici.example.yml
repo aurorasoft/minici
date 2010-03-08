@@ -1,6 +1,8 @@
 project_dir: Projects
 max_duration: 3600
 debug: false
+# Number of projects to try to build simultaneously
+concurrency: 2
 email:
   # smtp or sendmail - pick one
   delivery: smtp
