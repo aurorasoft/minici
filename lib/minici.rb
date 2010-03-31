@@ -4,7 +4,7 @@ require 'yaml'
 require 'lib/project'
 class Minici
 
-	VERSION="0.0.2"
+	VERSION="0.1.0"
 
 	def initialize
 		settings_file=[ 'minici.yml', '~/.minici.yml' ].collect { |x| Pathname.new(x).expand_path }.find { |x| File.exists?(x) }
@@ -37,13 +37,13 @@ class Minici
 	end
 
 	def start!(args)
-		projects=Project.enumerate
+		@projects=Project.enumerate
 
 		parse_arguments(args)
 
 		pids=[]
 
-		projects.each_slice(@settings['concurrency'].to_i) do |slice|
+		@projects.each_slice(@settings['concurrency'].to_i) do |slice|
 			slice.each do |id, project|
 				project['debug']=@settings['debug'] if project['debug'].nil?
 				project['debug']=true if @settings['force_debug']
@@ -68,10 +68,11 @@ private
 		case arg
 			when /--help/i
 				puts "minici v#{VERSION}"
-				puts " --debug       Force debug notices on"
-				puts " --force       Force building to continue, regardless of lockfiles"
-				puts " --help        This notice"
-				puts " --version     Version information"
+				puts " --debug          Force debug notices on"
+				puts " --force          Force building to continue, regardless of lockfiles"
+				puts " --help           This notice"
+				puts " --only=project   Only build the project called \"project\""
+				puts " --version        Version information"
 				puts ""
 				exit 0
 			when /--version/i
@@ -81,6 +82,8 @@ private
 				@settings['force_debug']=true
 			when /--force/i
 				@settings['force_locks']=true
+			when /--only=([^\s]+)/i
+				@projects.reject! { |key, value| key != $1 }
 			else
 				puts "Unknown argument: #{arg}"
 				exit 1
