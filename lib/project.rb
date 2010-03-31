@@ -198,7 +198,7 @@ private
 		debug("Processing commands for #{target} status")
 		if @data['notify'][target] && @data['notify'][target]['run'] then
 			cmd="cd #{@root}; #{@data['notify'][target]['run']} >> minici-build.log 2>> minici-build.log"
-			cmd.gsub!(/\$DATE/, Time.now.strftime('%Y%m%d'))
+			cmd=substitute_variables(cmd)
 			debug(cmd)
 			notice(`#{cmd}`)
 			complete=$?
@@ -226,9 +226,13 @@ EMAIL
 			
 			mail.add_file :filename => "build-#{current_revision}.log", :content => File.read(File.join(@root, "minici-build.log"))
 
-			if @data['notify'][target]['include'] then
-				@data['notify'][target]['include'].each do |filename|
+			@data['notify'][target]['attach'] ||= []
+			@data['notify'][target]['attach'] += @data['notify'][target]['include'] if @data['notify'][target]['include']
+
+			if @data['notify'][target]['attach'] then
+				@data['notify'][target]['attach'].each do |filename|
 					filename=File.join(@root, filename)
+					filename=substitute_variables(filename)
 					if File.exists?(filename) then
 						mail.add_file :filename => filename.gsub(/[^A-Za-z0-9\.\-_]/i,'_'), :content => File.read(filename)
 					else
@@ -305,5 +309,11 @@ EMAIL
 			target='failure'
 		end
 		return target
+	end
+
+	def substitute_variables(string)
+		string.gsub!(/\$DATE/, Time.now.strftime('%Y%m%d'))
+		string.gsub!(/\$REVISION/, current_revision[0..7])
+		string
 	end
 end

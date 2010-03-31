@@ -50,6 +50,26 @@ Now, the next time minici is run by cron, if there is a new revision, it will fi
 
 Depending on your settings, it will email you all the details.
 
+h3. Notification States
+
+There are three main notification states : @failure@, @success@ and @fixed@.
+
+@failure@ is triggered whenever a build fails.
+@success@ is triggered whenever a build passes.
+@fixed@ is triggered when a build passes, but the build before failed.
+
+h3. Notification Actions
+
+Each state can have different actions assigned to it, including code to run (@run@), what to attach to the email (@attach@) and who to email (@email@).
+
+@run@ events are always processed first, so as that their results can be used by @attach@ events.
+
+See @rails_project@ in the @projects.example.yml@ file for an example of using @run@ and @attach@ together.
+
+There are some tokens which can be used within @attach@ and @run@ commands, including :
+* @$DATE$@ which is replaced with the current date in @yyyymmdd@ format
+* @$REVISION$@ which is replaced with the current revision ID
+
 h2. Command Line Options
 
 bc.  --debug          Force debug notices on

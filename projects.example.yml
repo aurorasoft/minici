@@ -6,7 +6,7 @@ minici:
   notify:
     from: example@example.com
     failure:
-      include:
+      attach:
         - projects.yml
         - minici.yml
         - minici
@@ -29,7 +29,7 @@ minici:
 #  notify:
 #    from: example@example.com
 #    failure:
-#      include:
+#      attach:
 #        - log/cucumber.log
 #      email:
 #        - example@example.com
@@ -38,6 +38,6 @@ minici:
 #      email:
 #        - example@example.com
 #      run:
-#        - tar -czvf /tmp/rails_project-coverage-$DATE.tar.gz coverage/
-#      include:
-#        - /tmp/rails_project-coverage-$DATE.tar.gz
+#        - tar -czvf /tmp/rails_project-coverage-$DATE-$REVISION.tar.gz coverage/
+#      attach:
+#        - /tmp/rails_project-coverage-$DATE-$REVISION.tar.gz
