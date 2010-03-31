@@ -1,0 +1,83 @@
+h1. MiniCI
+
+h2. The Mini-CI system
+
+"minici":http://www.github.com/aurorasoft/minici is a super lightweight CI system written in Ruby.
+
+Simply call it periodically from cron, and it will check out your code from a git repository, update it to the latest version, and run the command that you specify.
+
+In our case, we're calling Rake, but any command which returns 0 on success, and anything else on error will work great.
+
+Configuration is done using two very simple YAML files:
+* @minici.yml@, which has the general configuration; and
+* @projects.yml@, which defines the projects to be tested
+
+See the @*.example.yml@ files for hints on how these should look.
+
+Emails can be sent on different stages depending on whether the build has failed, just been fixed, or is an ongoing successful build.
+
+h2. Key Aims
+
+* A super light weight CI script with nothing fancy
+* Minimal dependencies, simple setup
+* Something which runs via cron, not as a daemon
+* Must be fast (we want to run it on a Celeron 600MHz)
+* It must prevent me from watching the build script run
+* If it's running in cron, it must be threaded so as that a long running build can't stop all others
+
+h2. Dependencies
+
+* Ruby
+* mail gem (2.1.2 works)
+
+h2. Installation
+
+* Create somewhere for it to live (probably under your home)
+* git clone http://github.com/aurorasoft/minici.git
+* Add an entry in your crontab like :
+  @*/5 * * * * cd ~/minici; minici@
+* Start setting up your projects (see next section)
+
+h2. Setting up a new project
+
+Setting up a new project to be checked by minici is trivial :
+* Create an entry in @projects.yml@ for it, including the URL for the repository, the build command to run.
+* @minici@ will notice that the project is missing on it's next run and check out the project, including moving to the relevant branch.
+* Once it's been made, jump into the project directory (under @Projects/@ by default) and set up the environment.
+  For example, @database.yml@, and any other settings you may need.
+
+Now, the next time minici is run by cron, if there is a new revision, it will fire up and run the build script you've provided.
+
+Depending on your settings, it will email you all the details.
+
+h2. Command Line Options
+
+bc.  --debug          Force debug notices on
+ --force          Force building to continue, regardless of lockfiles
+ --help           This notice
+ --only=project   Only build the project called "project"
+ --version        Version information
+
+h2. Bugs, Shortcomings and Known Issues
+
+* Don't change the branch after the project has been created, as minici isn't watching for this kind of change. 
+  You _can_ change the branch, but you'll need to go into the project directory and "git checkout" the new branch manually.
+* Probably won't work on Windows, as it tends to use some shell tricks to get everything to work right.
+* Not sure whether it'll work on Mac, as I don't have one to test with.
+
+h2. TODO
+
+* Add support for other RCS (eg. Subversion, Hg)
+* Comments. Cos, you know, they're pretty light on at the moment...
+* Unit tests. There's not a lot of code here, but it still needs something!
+
+h2. Ego Trippin'
+
+Minici was built in one evening by "Jason Stirk":http://griffin.oobleyboo.com, because "CC.rb":http://cruisecontrolrb.thoughtworks.com/ was incredibly slow and clumsy, and I _still_ can't get "Integrity":http://integrityapp.com/ to fscking well run anywhere.
+
+Minici is in production use at "Aurora Software":http://www.aurorasoft.com.au/
+
+h2. Licencing
+
+Copyright (C) 2010 "Aurora Software":http://www.aurorasoft.com.au/
+Released under the MIT license
