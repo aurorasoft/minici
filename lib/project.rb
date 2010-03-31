@@ -113,6 +113,12 @@ private
 
 	def update_repository
 		old=current_revision
+
+		# TODO: Add per-project flag to suppress the reset
+		debug("Resetting working copy")
+		cmd="cd #{@root}; git reset --hard #{IO_REDIRECT}"
+		notice(`#{cmd}`)
+
 		debug("Pulling latest revision from origin")
 		cmd="cd #{@root}; git pull origin #{branch} #{IO_REDIRECT}"
 		notice(`#{cmd}`)

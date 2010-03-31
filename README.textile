@@ -86,6 +86,9 @@ h2. Bugs, Shortcomings and Known Issues
   You _can_ change the branch, but you'll need to go into the project directory and "git checkout" the new branch manually.
 * Probably won't work on Windows, as it tends to use some shell tricks to get everything to work right.
 * Not sure whether it'll work on Mac, as I don't have one to test with.
+* @git reset --hard@ is run on the working copy before the latest version is pulled, so as to prevent any "not uptodate" issues.
+  This means you can't have local changes to checked in configuration files (which we think is a good thing!)
+  If your configuration files need to change on different machines, we suggest they be renamed to be an example file, and your deployment code puts the local modifications it into the correct position.
 
 h2. TODO
 
