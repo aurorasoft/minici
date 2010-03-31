@@ -49,6 +49,7 @@ class Minici
 				project['debug']=true if @settings['force_debug']
 				project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
 				project['max_duration']=@settings['max_duration'] if project['max_duration'].nil?
+				project['force_locks']=@settings['force_locks']
 				p=Project.new(id, project, self)
 				pids << p.fork_and_process!
 			end
@@ -68,6 +69,7 @@ private
 			when /--help/i
 				puts "minici v#{VERSION}"
 				puts " --debug       Force debug notices on"
+				puts " --force       Force building to continue, regardless of lockfiles"
 				puts " --help        This notice"
 				puts " --version     Version information"
 				puts ""
@@ -77,6 +79,8 @@ private
 				exit 0
 			when /--debug/i
 				@settings['force_debug']=true
+			when /--force/i
+				@settings['force_locks']=true
 			else
 				puts "Unknown argument: #{arg}"
 				exit 1

@@ -273,8 +273,9 @@ EMAIL
 		if File.exists?(lock_file) then
 			debug('Lockfile exists...')
 			mtime=File.stat(lock_file).mtime
-			if mtime < (Time.now - @data['max_duration'].to_i) then
-				# Old process has been running for longer than max_duration
+			if @data['force_locks'] || (mtime < (Time.now - @data['max_duration'].to_i)) then
+				# Old process has been running for longer than max_duration, or we've been told to force the locks
+				debug("--force provided: forcing locks") if @data['force_locks']
 				old_pid=File.read(lock_file).strip
 				debug("Lockfile is #{(Time.now-mtime).to_i} seconds old - sending SIG_KILL to #{old_pid}")
 				begin
