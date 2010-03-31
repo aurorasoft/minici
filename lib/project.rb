@@ -231,8 +231,11 @@ EMAIL
 
 			if @data['notify'][target]['attach'] then
 				@data['notify'][target]['attach'].each do |filename|
-					filename=File.join(@root, filename)
+					if filename[0].chr != '/' then
+						filename=File.join(@root, filename)
+					end
 					filename=substitute_variables(filename)
+					debug("Attaching: #{filename}")
 					if File.exists?(filename) then
 						mail.add_file :filename => filename.gsub(/[^A-Za-z0-9\.\-_]/i,'_'), :content => File.read(filename)
 					else

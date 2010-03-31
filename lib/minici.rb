@@ -4,7 +4,7 @@ require 'yaml'
 require 'lib/project'
 class Minici
 
-	VERSION="0.2.0"
+	VERSION="0.2.1"
 
 	def initialize
 		settings_file=[ 'minici.yml', '~/.minici.yml' ].collect { |x| Pathname.new(x).expand_path }.find { |x| File.exists?(x) }
