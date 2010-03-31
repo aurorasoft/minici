@@ -1,6 +1,6 @@
 minici:
   name: minici
-  repo: git@aurorasoft.com.au:minici.git
+  repo: http://github.com/aurorasoft/minici.git
   build:
     - rake spec
   notify:
@@ -18,3 +18,26 @@ minici:
     fixed:
       email:
         - example@example.com
+# Here is an example Rails project
+#rails_project:
+#  name: My Little Rails Project
+#  repo: git@privaterepo.com:rails_project.git
+#  build:
+#    - rake log:clear
+#    - RAILS_ENV=cucumber rake gems:install db:drop db:create db:migrate
+#    - rake cucumber rcov:cucumber
+#  notify:
+#    from: example@example.com
+#    failure:
+#      include:
+#        - log/cucumber.log
+#      email:
+#        - example@example.com
+#    success:
+#    fixed:
+#      email:
+#        - example@example.com
+#      run:
+#        - tar -czvf /tmp/rails_project-coverage-$DATE.tar.gz coverage/
+#      include:
+#        - /tmp/rails_project-coverage-$DATE.tar.gz
