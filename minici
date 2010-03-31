@@ -4,4 +4,4 @@
 # http://github.com/aurorasoft/minici/
 
 require 'lib/minici'
-Minici.new.start!
+Minici.new.start!(ARGV)

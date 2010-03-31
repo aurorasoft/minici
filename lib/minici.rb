@@ -3,6 +3,9 @@ require 'pathname'
 require 'yaml'
 require 'lib/project'
 class Minici
+
+	VERSION="0.0.2"
+
 	def initialize
 		settings_file=[ 'minici.yml', '~/.minici.yml' ].collect { |x| Pathname.new(x).expand_path }.find { |x| File.exists?(x) }
 		settings_yml={}
@@ -33,20 +36,50 @@ class Minici
 		end
 	end
 
-	def start!
+	def start!(args)
 		projects=Project.enumerate
+
+		parse_arguments(args)
 
 		pids=[]
 
 		projects.each_slice(@settings['concurrency'].to_i) do |slice|
 			slice.each do |id, project|
 				project['debug']=@settings['debug'] if project['debug'].nil?
+				project['debug']=true if @settings['force_debug']
 				project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
 				project['max_duration']=@settings['max_duration'] if project['max_duration'].nil?
 				p=Project.new(id, project, self)
 				pids << p.fork_and_process!
 			end
 			Process.waitall
+		end
+	end
+
+private
+	def parse_arguments(args)
+		args.each do |arg|
+			parse_argument(arg)
+		end
+	end
+
+	def parse_argument(arg)
+		case arg
+			when /--help/i
+				puts "minici v#{VERSION}"
+				puts " --debug       Force debug notices on"
+				puts " --help        This notice"
+				puts " --version     Version information"
+				puts ""
+				exit 0
+			when /--version/i
+				puts "minici v#{VERSION}"
+				exit 0
+			when /--debug/i
+				@settings['force_debug']=true
+			else
+				puts "Unknown argument: #{arg}"
+				exit 1
 		end
 	end
 end
