@@ -37,7 +37,7 @@ class Project
 			check_repository
 			head_revision=server_revision
 			debug("Local: #{current_revision[0..7]} Remote: #{server_revision[0..7]}")
-			if current_revision != head_revision then
+			if current_revision && head_revision && current_revision != head_revision then
 				# We need to update!
 				update_repository
 
@@ -151,7 +151,7 @@ private
 			# Exit out forcibly
 			debug(string)
 			STDERR << "\n#{string}\n"
-			'00000000'
+			nil
 		end
 	end
 
@@ -196,7 +196,7 @@ private
 		target=generate_target(new_status, old_status)
 
 		debug("Processing commands for #{target} status")
-		if @data['notify'][target]['run'] then
+		if @data['notify'][target] && @data['notify'][target]['run'] then
 			cmd="cd #{@root}; #{@data['notify'][target]['run']} >> minici-build.log 2>> minici-build.log"
 			cmd.gsub!(/\$DATE/, Time.now.strftime('%Y%m%d'))
 			debug(cmd)
@@ -210,7 +210,7 @@ private
 		target=generate_target(new_status, old_status)
 
 		debug("Processing notifications for #{target} status")
-		if @data['notify'][target]['email'] then
+		if @data['notify'][target] && @data['notify'][target]['email'] then
 			mail=Mail.new
 			mail.from @data['notify']['from'] || 'minici-noreply@example.com'
 			mail.to @data['notify'][target]['email'].join(', ')
