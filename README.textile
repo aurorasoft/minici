@@ -55,8 +55,10 @@ h3. Notification States
 There are three main notification states : @failure@, @success@ and @fixed@.
 
 @failure@ is triggered whenever a build fails.
-@success@ is triggered whenever a build passes.
+@success@ is triggered whenever a build passes and the last build did too.
 @fixed@ is triggered when a build passes, but the build before failed.
+
+It's important to note that only one state is triggered each run - if it's @fixed@, we don't trigger @success@ too.
 
 h3. Notification Actions
 
