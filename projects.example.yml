@@ -8,6 +8,7 @@ minici:
   # or specify an entire use string
   # rvm: ree@minici-minici
   build:
+    - bundle install
     - rake spec
   notify:
     from: example@example.com
@@ -29,6 +30,7 @@ minici:
 #  name: My Little Rails Project
 #  repo: git@privaterepo.com:rails_project.git
 #  build:
+#    - bundle install
 #    - rake log:clear
 #    - RAILS_ENV=cucumber rake gems:install db:drop db:create db:migrate
 #    - rake cucumber rcov:cucumber
