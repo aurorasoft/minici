@@ -96,6 +96,7 @@ h2. Bugs, Shortcomings and Known Issues
 
 h2. TODO
 
+* Detect when a Gemfile is present and install it automatically if they have rvm enabled
 * Add support for other RCS (eg. Subversion, Hg)
 * Comments. Cos, you know, they're pretty light on at the moment...
 * Unit tests. There's not a lot of code here, but it still needs something!
