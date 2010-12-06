@@ -21,6 +21,9 @@ class Minici
 		# By default, let five projects build at a time
 		@settings['concurrency'] ||= 5
 
+		# By default, don't use rvm
+		@settings['rvm_gemset']=false
+
 		unless File.exist?(@settings['project_dir']) && File.directory?(@settings['project_dir']) then
 			FileUtils.mkdir(@settings['project_dir'])
 		end
@@ -50,6 +53,7 @@ class Minici
 				project['project_dir']=@settings['project_dir'] if project['project_dir'].nil?
 				project['max_duration']=@settings['max_duration'] if project['max_duration'].nil?
 				project['force_locks']=@settings['force_locks']
+				project['rvm']=@settings['rvm'] if project['rvm'].blank?
 				p=Project.new(id, project, self)
 				pids << p.fork_and_process!
 			end

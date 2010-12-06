@@ -24,11 +24,16 @@ h2. Key Aims
 * Must be fast (we want to run it on a Celeron 600MHz)
 * It must prevent me from watching the build script run
 * If it's running in cron, it must be threaded so as that a long running build can't stop all others
+* Needs to support rvm out of the box
 
 h2. Dependencies
 
+There is a project Gemfile - install bundler and then run "bundle install" to install dependencies.
+
 * Ruby
 * mail gem (2.1.2 works)
+
+Also works with "rvm":http://rvm.beginrescueend.com/ but this is not required to work (just disable it in minici.yml).
 
 h2. Installation
 
@@ -85,7 +90,6 @@ h2. Bugs, Shortcomings and Known Issues
 * Don't change the branch after the project has been created, as minici isn't watching for this kind of change. 
   You _can_ change the branch, but you'll need to go into the project directory and "git checkout" the new branch manually.
 * Probably won't work on Windows, as it tends to use some shell tricks to get everything to work right.
-* Not sure whether it'll work on Mac, as I don't have one to test with.
 * @git reset --hard@ is run on the working copy before the latest version is pulled, so as to prevent any "not uptodate" issues.
   This means you can't have local changes to checked in configuration files (which we think is a good thing!)
   If your configuration files need to change on different machines, we suggest they be renamed to be an example file, and your deployment code puts the local modifications it into the correct position.

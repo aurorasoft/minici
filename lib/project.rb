@@ -172,7 +172,10 @@ private
 
 		if @data['build'].is_a?(Array) then
 			@data['build'].each do |instruction|
-				cmd="cd #{@root}; #{instruction} >> minici-build.log 2>> minici-build.log"
+				cmd=[ "cd #{@root}" ]
+				cmd << rvm_use
+				cmd << "#{instruction} >> minici-build.log 2>> minici-build.log"
+				cmd=cmd.compact.join('; ')
 				debug(cmd)
 				notice(`#{cmd}`)
 				complete=$?
@@ -180,7 +183,10 @@ private
 				complete_full += complete.exitstatus
 			end
 		else
-			cmd="cd #{@root}; #{@data['build']} >> minici-build.log 2>> minici-build.log"
+			cmd=[ "cd #{@root} " ]
+			cmd << rvm_use
+			cmd << "#{@data['build']} >> minici-build.log 2>> minici-build.log"
+			cmd=cmd.compact.join('; ')
 			debug(cmd)
 			notice(`#{cmd}`)
 			complete=$?
@@ -203,8 +209,10 @@ private
 
 		debug("Processing commands for #{target} status")
 		if @data['notify'][target] && @data['notify'][target]['run'] then
-			cmd="cd #{@root}; #{@data['notify'][target]['run']} >> minici-build.log 2>> minici-build.log"
-			cmd=substitute_variables(cmd)
+			cmd=[ "cd #{@root}" ]
+			cmd << rvm_use
+			cmd << "#{@data['notify'][target]['run']} >> minici-build.log 2>> minici-build.log"
+			cmd=substitute_variables(cmd.compact.join(';'))
 			debug(cmd)
 			notice(`#{cmd}`)
 			complete=$?
@@ -324,5 +332,28 @@ EMAIL
 		string.gsub!(/\$DATE/, Time.now.strftime('%Y%m%d'))
 		string.gsub!(/\$REVISION/, current_revision[0..7])
 		string
+	end
+
+	def rvm_use
+		if @data['rvm'].blank? || @data['rvm'] === false then
+			nil
+		else
+			if @data['rvm'].is_a?(String) then
+				use="rvm use #{@data['rvm']} --create"
+			else
+				use="rvm use @minici-#{@id} --create"
+			end
+
+			# Create a .rvmrc file unless there is one already
+			rvmrc=File.join(@root, '.rvmrc')
+			if !File.exist?(rvmrc) then
+				msg="Created .rvmrc: #{use}"
+				notice(msg); debug(msg)
+				File.open(rvmrc, 'w') do |f|
+					f << use
+				end
+			end
+			use
+		end
 	end
 end

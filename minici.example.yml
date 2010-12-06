@@ -3,6 +3,10 @@ max_duration: 3600
 debug: false
 # Number of projects to try to build simultaneously
 concurrency: 2
+# Uses RVM by default. To disable, use the following :
+# rvm: false
+# If set to true, will use the default ruby and a gemset like @minici-#{projectname} for each project
+rvm: true
 email:
   # smtp or sendmail - pick one
   delivery: smtp

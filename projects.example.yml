@@ -1,6 +1,12 @@
 minici:
   name: minici
   repo: http://github.com/aurorasoft/minici.git
+  # Could disable RVM specifically here:
+  # rvm: false
+  # or specify which gemset to use with default ruby
+  # rvm: @minici-minici
+  # or specify an entire use string
+  # rvm: ree@minici-minici
   build:
     - rake spec
   notify:
