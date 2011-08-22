@@ -4,7 +4,7 @@ require 'yaml'
 require 'lib/project'
 class Minici
 
-	VERSION="0.2.2"
+	VERSION="0.2.3"
 
 	def initialize
 		settings_file=[ 'minici.yml', '~/.minici.yml' ].collect { |x| Pathname.new(x).expand_path }.find { |x| File.exists?(x) }
@@ -72,11 +72,12 @@ private
 		case arg
 			when /--help/i
 				puts "minici v#{VERSION}"
-				puts " --debug          Force debug notices on"
-				puts " --force          Force building to continue, regardless of lockfiles"
-				puts " --help           This notice"
-				puts " --only=project   Only build the project called \"project\""
-				puts " --version        Version information"
+				puts " --debug              Force debug notices on"
+				puts " --force              Force building to continue, regardless of lockfiles"
+				puts " --help               This notice"
+				puts " --only=project       Only build the project called \"project\""
+				puts " --version            Version information"
+				puts " --test-email=EMAIL   Test that email delivery works by emailing \"EMAIL\""
 				puts ""
 				exit 0
 			when /--version/i
@@ -88,6 +89,14 @@ private
 				@settings['force_locks']=true
 			when /--only=([^\s]+)/i
 				@projects.reject! { |key, value| key != $1 }
+			when /--test-email=([^\s]+)/i
+				mail = Mail.new
+				mail.from 'minici-noreply@example.com'
+				mail.to $1
+				mail.subject "MINICI: Test email from #{`hostname`.strip}"
+				mail.body = "MINICI Test Email - Connection Successful!"
+				mail.deliver!
+				exit 0
 			else
 				puts "Unknown argument: #{arg}"
 				exit 1

@@ -79,11 +79,12 @@ There are some tokens which can be used within @attach@ and @run@ commands, incl
 
 h2. Command Line Options
 
-bc.  --debug          Force debug notices on
- --force          Force building to continue, regardless of lockfiles
- --help           This notice
- --only=project   Only build the project called "project"
- --version        Version information
+bc.  --debug              Force debug notices on
+ --force              Force building to continue, regardless of lockfiles
+ --help               This notice
+ --only=project       Only build the project called "project"
+ --version            Version information
+ --test-email=EMAIL   Test that email delivery works by emailing \"EMAIL\""
 
 h2. Bugs, Shortcomings and Known Issues
 
