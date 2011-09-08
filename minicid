@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+args = ARGV.join(' ')
+system("./minici #{args}")
+sleep(5 * 60)
+
+exec("./minicid #{args}")
